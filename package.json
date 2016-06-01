@@ -1,0 +1,19 @@
+{
+  "name": "systemjs-istanbul",
+  "version": "0.1.0",
+  "license": "MIT",
+  "main": "index.js",
+  "dependencies": {
+    "istanbul": "^0.4.3",
+    "remap-istanbul": "^0.6.4"
+  },
+  "devDependencies": {
+    "mocha": "^2.5.3",
+    "systemjs": "^0.19.29",
+    "systemjs-plugin-babel": "0.0.12",
+    "unexpected": "^10.13.3"
+  },
+  "scripts": {
+    "test": "cd test && node test.js && istanbul report && open coverage/lcov-report/index.html"
+  }
+}

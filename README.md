@@ -1,7 +1,7 @@
 Provides a SystemJS `translate` hook for injecting Istanbul coverage reports into a SystemJS application.
 
-In addition it comes with bundled support for the [remap-istanbul](https://github.com/SitePen/remap-istanbul) project, regardless of 
-module format or SystemJS loader plugins used, to have full coverage reports of the original sources be it ES6 or JSX etc.
+In addition it comes with bundled support for the [remap-istanbul](https://github.com/SitePen/remap-istanbul) project. This provides
+full coverage reports to the original sources be it ES6 or JSX etc, regardless of module format or SystemJS loader plugins used.
 
 > This is an experimental project, use at your own risk and support may be limited.
 
@@ -59,7 +59,7 @@ var systemIstanbul = require('systemjs-istanbul');
 var builder = new Builder('.');
 
 // hook the builder loader before creating the bundle
-systemIstanbul.hookSystemJS(builderLoader);
+systemIstanbul.hookSystemJS(builder.loader);
 
 builder.bundle('test.js', 'out.js');
 
@@ -86,7 +86,7 @@ var systemIstanbul = require('systemjs-istanbul');
 var builder = new Builder('.');
 
 // hook the builder loader before creating the bundle
-systemIstanbul.hookSystemJS(builderLoader);
+systemIstanbul.hookSystemJS(builder.loader);
 
 builder.compile(requestedModule).then(function(output) {
   respondWith(output.source);

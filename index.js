@@ -8,7 +8,8 @@ var path = require('path');
 
 var istanbulGlobal;
 
-var originalSources = {};
+var _originalSources = {};
+exports.originalSources = originalSources;
 
 function fromFileURL(url) {
   if (url.substr(0, 7) == 'file:///')
@@ -55,7 +56,7 @@ exports.hookSystemJS = function(loader, exclude, coverageGlobal) {
 
       var name = load.address.substr(System.baseURL.length);
 
-      originalSources[name] = {
+      _originalSources[name] = {
         source: originalSource,
         sourceMap: load.metadata.sourceMap
       };
@@ -74,8 +75,9 @@ exports.hookSystemJS = function(loader, exclude, coverageGlobal) {
   loader.translate.coverageAttached = true;
 }
 
-exports.remapCoverage = function(coverage) {
+exports.remapCoverage = function(coverage, originalSources) {
   coverage = coverage || global[istanbulGlobal];
+  originalSources = originalSources || _originalSources;
   var collector = remapIstanbul(coverage, {
     readFile: function(name) {
       return originalSources[name].source + 

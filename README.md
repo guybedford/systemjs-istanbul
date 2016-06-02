@@ -31,7 +31,7 @@ Having hooked the loader, any code run through `SystemJS.import` will start popu
 After running the code being tested, coverage can be remapped with source maps via:
 
 ```javascript
-var remappedCoverage = systemIstanbul.remap();
+var remappedCoverage = systemIstanbul.remapCoverage();
 fs.writeFileSync('coverage.json', JSON.stringify(remappedCoverage, null, 2));
 ```
 
@@ -71,7 +71,7 @@ The rest is just wiring at this point - we then execute the bundle in the browse
 before remapping back in the server:
 
 ```javascript
-var remappedCoverage = systemIstanbul.remap(coverageFromBrowser, originalSources);
+var remappedCoverage = systemIstanbul.remapCoverage(coverageFromBrowser, originalSources);
 fs.writeFileSync('coverage.json', JSON.stringify(remappedCoverage, null, 2));
 ```
 

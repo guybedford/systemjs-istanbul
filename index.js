@@ -9,7 +9,7 @@ var path = require('path');
 var istanbulGlobal;
 
 var _originalSources = {};
-exports.originalSources = originalSources;
+exports.originalSources = _originalSources;
 
 function fromFileURL(url) {
   if (url.substr(0, 7) == 'file:///')
@@ -43,7 +43,7 @@ exports.hookSystemJS = function(loader, exclude, coverageGlobal) {
     var originalSource = load.source;
     return loaderTranslate.call(this, load)
     .then(function(source) {
-      if (load.metadata.format == 'json' || load.metadata.format == 'defined' || load.metadata.loader)
+      if (load.metadata.format == 'json' || load.metadata.format == 'defined' || load.metadata.loader && load.metadata.loaderModule.build === false)
         return source;      
 
       // excludes
@@ -94,15 +94,20 @@ exports.remapCoverage = function(coverage, originalSources) {
       if (typeof sourceMap == 'string')
         sourceMap = JSON.parse(sourceMap);
 
-      sourceMap.sources = sourceMap.sources.map((src) => {
-        return path.relative(process.cwd(), path.resolve(path.dirname(name), src));
+      sourceMap.sourcesContent = sourceMap.sourcesContent || [];
+
+      sourceMap.sources = sourceMap.sources.map((src, index) => {
+        var sourcePath = path.relative(process.cwd(), path.resolve(path.dirname(name), sourceMap.sourceRoot || '.', src));
+        if (originalSources[sourcePath] && !sourceMap.sourcesContent[index])
+          sourceMap.sourcesContent[index] = originalSources[sourcePath].source;
+        return sourcePath;
       });
+
       return sourceMap;
     },
     warn: function(msg) {
       if (msg.toString().indexOf('Could not find source map for') != -1)
         return;
-      console.warn(msg);
     }
   });
   var coverage = collector.getFinalCoverage();

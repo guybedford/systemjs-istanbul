@@ -9,9 +9,11 @@
   },
   "devDependencies": {
     "mocha": "^2.5.3",
+    "plugin-typescript": "^4.0.17",
     "systemjs": "^0.19.29",
     "systemjs-builder": "^0.15.19",
     "systemjs-plugin-babel": "0.0.12",
+    "typescript": "^1.8.10",
     "unexpected": "^10.13.3"
   }
 }

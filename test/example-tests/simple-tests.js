@@ -15,5 +15,11 @@ export default {
     let es6 = await System.import('app/es6.js');
     let result = await es6.a();
     expect(result, 'to equal', 'first function');
+  },
+
+  'ts.ts': async function() {
+    let ts = await System.import('app/ts.ts');
+    var c = new ts.TypeClass();
+    expect(c.thing, 'to be defined');
   }
 }

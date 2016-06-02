@@ -1,0 +1,32 @@
+<!doctype html>
+<link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+<body>
+  <div id="mocha"></div>
+<script src="../node_modules/systemjs/dist/system.src.js"></script>
+<script src="../node_modules/mocha/mocha.js"></script>
+<script>
+  System.config({
+    baseURL: 'http://localhost:8080/',
+    paths: {
+      'app/': 'example-app/'
+    },
+    meta: {
+      '*': { scriptLoad: true }
+    }
+  });
+</script>
+<script>
+  System.import('test-runner.js').then(function(runTests) {
+    return runTests(Mocha);
+  })
+  .then(function() {
+    // send back coverage object to compilation server
+    return fetch('http://localhost:8080/generate-coverage', {
+      method: 'post',
+      body: JSON.stringify(window.__coverage__, null, 2)
+    }).then(function(response) {
+      if (response.status != 200)
+        throw response.statusText;
+    });
+  });
+</script>

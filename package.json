@@ -10,10 +10,8 @@
   "devDependencies": {
     "mocha": "^2.5.3",
     "systemjs": "^0.19.29",
+    "systemjs-builder": "^0.15.19",
     "systemjs-plugin-babel": "0.0.12",
     "unexpected": "^10.13.3"
-  },
-  "scripts": {
-    "test": "cd test && node test.js && istanbul report && open coverage/lcov-report/index.html"
   }
 }

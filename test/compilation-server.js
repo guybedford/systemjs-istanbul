@@ -11,12 +11,6 @@ var builder = new Builder('.');
 builder.config({
   paths: {
     'node_modules/': '../node_modules/'
-  },
-  meta: {
-    '*.js': {
-      // ensure plugin-babel doesn't output ESM code in translate for compilation
-      outputESM: false
-    }
   }
 });
 builder.loadConfig('./test.config.js');

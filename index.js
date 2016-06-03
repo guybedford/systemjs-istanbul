@@ -41,7 +41,7 @@ exports.hookSystemJS = function(loader, exclude, coverageGlobal) {
   var loaderTranslate = loader.translate;
   loader.translate = function(load) {
     var originalSource = load.source;
-    return loaderTranslate.call(this, load)
+    return loaderTranslate.apply(this, arguments)
     .then(function(source) {
       if (load.metadata.format == 'json' || load.metadata.format == 'defined' || load.metadata.loader && load.metadata.loaderModule.build === false)
         return source;      

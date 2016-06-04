@@ -10,11 +10,11 @@ full coverage reports to the original sources be it ES6 or JSX etc, regardless o
 The Istanbul coverage can be hooked into SystemJS through NodeJS via:
 
 ```
-npm install systemjs-istanbul
+npm install systemjs-istanbul-hook
 ```
 
 ```javascript
-var systemIstanbul = require('systemjs-istanbul');
+var systemIstanbul = require('systemjs-istanbul-hook');
 
 systemIstanbul.hookSystemJS(SystemJS, function exclude(address) {
   // custom exclude function to skip coverage instrumentation for files
@@ -54,7 +54,7 @@ With this approach, we hook the builder via:
 
 ```javascript
 var Builder = require('systemjs-builder');
-var systemIstanbul = require('systemjs-istanbul');
+var systemIstanbul = require('systemjs-istanbul-hook');
 
 var builder = new Builder('.');
 
@@ -81,7 +81,7 @@ This approach is identical to (1) above, except that instead of building a bundl
 
 ```javascript
 var Builder = require('systemjs-builder');
-var systemIstanbul = require('systemjs-istanbul');
+var systemIstanbul = require('systemjs-istanbul-hook');
 
 var builder = new Builder('.');
 

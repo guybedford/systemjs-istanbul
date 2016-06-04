@@ -1,5 +1,9 @@
-// simple SystemJS compilation server
-// precompiles SystemJS translations
+/* simple SystemJS compilation server example
+ * precompiles SystemJS translations
+ * 
+ * run this server via `node compilation-server.js` then open test-browser.html 
+ *   with file access flags enabled or over a local server
+ */
 var Builder = require('systemjs-builder');
 
 var istanbulSystem = require('../index.js');
@@ -25,6 +29,10 @@ var http = require('http');
 
 var server = http.createServer(function(req, res) {
   if (req.method == 'GET') {
+    // for a request to x.js, run that as a module compile through SystemJS builder
+    // which will then return the translated source into System.register / System.registerDynamic
+    // just for that individual module
+    // this gives us a server-side pre-compilation separate file workflow
     builder.compile(req.url.substr(1))
     .then(function(output) {
       res.writeHead(200, { 'Content-Type': 'text/html' });
@@ -42,7 +50,7 @@ var server = http.createServer(function(req, res) {
       }
     });
   }
-  // accept a special coverage generation request
+  // accept a special coverage generation request which sends back the window.__coverage__ object from the browser
   else if (req.method == 'POST' && req.url == '/generate-coverage') {
     var data = [];
     req.on('data', data.push.bind(data));

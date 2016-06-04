@@ -1,5 +1,5 @@
 {
-  "name": "systemjs-istanbul",
+  "name": "systemjs-istanbul-hook",
   "version": "0.1.0",
   "license": "MIT",
   "main": "index.js",

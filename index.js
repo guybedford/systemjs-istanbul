@@ -44,7 +44,7 @@ exports.hookSystemJS = function(loader, exclude, coverageGlobal) {
     return loaderTranslate.apply(this, arguments)
     .then(function(source) {
       if (load.metadata.format == 'json' || load.metadata.format == 'defined' || load.metadata.loader && load.metadata.loaderModule.build === false)
-        return source;      
+        return source;
 
       // excludes
       if (exclude && exclude(load.address))
@@ -75,12 +75,20 @@ exports.hookSystemJS = function(loader, exclude, coverageGlobal) {
   loader.translate.coverageAttached = true;
 }
 
+function normalizeSourcePaths(sources) {
+  if (!sources) return sources;
+  Object.keys(sources).forEach(function (pathName) {
+    sources[path.normalize(pathName)] = sources[pathName];
+  });
+  return sources;
+}
+
 exports.remapCoverage = function(coverage, originalSources) {
   coverage = coverage || global[istanbulGlobal];
-  originalSources = originalSources || _originalSources;
+  originalSources = normalizeSourcePaths(originalSources || _originalSources);
   var collector = remapIstanbul(coverage, {
     readFile: function(name) {
-      return originalSources[name].source + 
+      return originalSources[name].source +
           (originalSources[name] && originalSources[name].sourceMap ? '\n//# sourceMappingURL=' + name.split('/').pop() + '.map' : '');
     },
     readJSON: function(name) {

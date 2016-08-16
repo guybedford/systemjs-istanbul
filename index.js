@@ -11,10 +11,15 @@ var istanbulGlobal;
 var _originalSources = {};
 exports.originalSources = _originalSources;
 
+var filePrefixRExp;
+if (/^win/.test(process.platform)) {
+  // Windows adds the drive letter, so we must strip that too
+  filePrefixRExp = /file:\/\/\/\w:\//;
+} else {
+  filePrefixRExp = /file:\/\/\//;
+}
 function fromFileURL(url) {
-  if (url.substr(0, 7) == 'file:///')
-    return url.substr(6 + process.platform.match(/^win/));
-  return url;
+  return url.replace(filePrefixRExp);
 }
 
 exports.hookSystemJS = function(loader, exclude, coverageGlobal) {

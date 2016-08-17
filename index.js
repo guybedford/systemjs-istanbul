@@ -59,7 +59,7 @@ exports.hookSystemJS = function(loader, exclude, coverageGlobal) {
       if (load.address.substr(0, System.baseURL.length) != System.baseURL)
         return source;
 
-      var name = load.address.substr(System.baseURL.length);
+      var name = path.normalize(load.address.substr(System.baseURL.length));
 
       _originalSources[name] = {
         source: originalSource,
@@ -80,28 +80,20 @@ exports.hookSystemJS = function(loader, exclude, coverageGlobal) {
   loader.translate.coverageAttached = true;
 }
 
-function normalizeSourcePaths(sources) {
-  if (!sources) return sources;
-  Object.keys(sources).forEach(function (pathName) {
-    sources[path.normalize(pathName)] = sources[pathName];
-  });
-  return sources;
-}
-
 exports.remapCoverage = function(coverage, originalSources) {
   coverage = coverage || global[istanbulGlobal];
-  originalSources = normalizeSourcePaths(originalSources || _originalSources);
+  originalSources = originalSources || _originalSources;
   var collector = remapIstanbul(coverage, {
     readFile: function(name) {
       return originalSources[name].source +
-          (originalSources[name] && originalSources[name].sourceMap ? '\n//# sourceMappingURL=' + name.split('/').pop() + '.map' : '');
+          (originalSources[name] && originalSources[name].sourceMap ? '\n//# sourceMappingURL=' + name.split(path.sep).pop() + '.map' : '');
     },
     readJSON: function(name) {
-      var originalSourcesObj = originalSources[name.substr(0, name.length - 4)];
-
+      var sourceFileName = name.substr(0, name.length - 4);
+      var originalSourcesObj = originalSources[sourceFileName];
       // non transpilation-created source map -> load the source map file directly
       if (!originalSourcesObj || !originalSourcesObj.sourceMap)
-        return JSON.parse(fs.readFileSync(fromFileURL(name.substr(0, name.length - 4))));
+        return JSON.parse(fs.readFileSync(fromFileURL(sourceFileName)));
 
       var sourceMap = originalSourcesObj.sourceMap;
       if (typeof sourceMap == 'string')

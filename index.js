@@ -11,10 +11,15 @@ var istanbulGlobal;
 var _originalSources = {};
 exports.originalSources = _originalSources;
 
+var filePrefixRExp;
+if (/^win/.test(process.platform)) {
+  // Windows adds the drive letter, so we must strip that too
+  filePrefixRExp = /file:\/\/\/\w:\//;
+} else {
+  filePrefixRExp = /file:\/\/\//;
+}
 function fromFileURL(url) {
-  if (url.substr(0, 7) == 'file:///')
-    return url.substr(6 + process.platform.match(/^win/));
-  return url;
+  return url.replace(filePrefixRExp);
 }
 
 exports.hookSystemJS = function(loader, exclude, coverageGlobal) {
@@ -44,7 +49,7 @@ exports.hookSystemJS = function(loader, exclude, coverageGlobal) {
     return loaderTranslate.apply(this, arguments)
     .then(function(source) {
       if (load.metadata.format == 'json' || load.metadata.format == 'defined' || load.metadata.loader && load.metadata.loaderModule.build === false)
-        return source;      
+        return source;
 
       // excludes
       if (exclude && exclude(load.address))
@@ -54,7 +59,7 @@ exports.hookSystemJS = function(loader, exclude, coverageGlobal) {
       if (load.address.substr(0, System.baseURL.length) != System.baseURL)
         return source;
 
-      var name = load.address.substr(System.baseURL.length);
+      var name = path.normalize(load.address.substr(System.baseURL.length));
 
       _originalSources[name] = {
         source: originalSource,
@@ -80,15 +85,15 @@ exports.remapCoverage = function(coverage, originalSources) {
   originalSources = originalSources || _originalSources;
   var collector = remapIstanbul(coverage, {
     readFile: function(name) {
-      return originalSources[name].source + 
-          (originalSources[name] && originalSources[name].sourceMap ? '\n//# sourceMappingURL=' + name.split('/').pop() + '.map' : '');
+      return originalSources[name].source +
+          (originalSources[name] && originalSources[name].sourceMap ? '\n//# sourceMappingURL=' + name.split(path.sep).pop() + '.map' : '');
     },
     readJSON: function(name) {
-      var originalSourcesObj = originalSources[name.substr(0, name.length - 4)];
-
+      var sourceFileName = name.substr(0, name.length - 4);
+      var originalSourcesObj = originalSources[sourceFileName];
       // non transpilation-created source map -> load the source map file directly
       if (!originalSourcesObj || !originalSourcesObj.sourceMap)
-        return JSON.parse(fs.readFileSync(fromFileURL(name.substr(0, name.length - 4))));
+        return JSON.parse(fs.readFileSync(fromFileURL(sourceFileName)));
 
       var sourceMap = originalSourcesObj.sourceMap;
       if (typeof sourceMap == 'string')

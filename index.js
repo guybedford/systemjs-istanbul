@@ -42,6 +42,10 @@ exports.hookSystemJS = function(loader, exclude, coverageGlobal) {
   var instrumenter = new istanbul.Instrumenter({
     coverageVariable: istanbulGlobal
   });
+  var esInstrumenter = new istanbul.Instrumenter({
+    coverageVariable: istanbulGlobal,
+    esModules: true
+  });
 
   var loaderTranslate = loader.translate;
   loader.translate = function(load) {
@@ -67,7 +71,10 @@ exports.hookSystemJS = function(loader, exclude, coverageGlobal) {
       };
 
       try {
-        return instrumenter.instrumentSync(source, name);
+        if (load.metadata.format === 'esm')
+          return esInstrumenter.instrumentSync(source, name);
+        else
+          return instrumenter.instrumentSync(source, name);
       }
       catch (e) {
         var newErr = new Error('Unable to instrument "' + name + '" for istanbul.\n\t' + e.message);

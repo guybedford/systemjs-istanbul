@@ -4,8 +4,8 @@
   "license": "MIT",
   "main": "index.js",
   "dependencies": {
-    "istanbul": "^0.4.3",
-    "remap-istanbul": "^0.6.4"
+    "istanbul": "^0.4.5",
+    "remap-istanbul": "^0.8.4"
   },
   "devDependencies": {
     "mocha": "^2.5.3",
